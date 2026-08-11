@@ -1,4 +1,4 @@
-# MEDIFLOW � COMPLETED WORK
+# MEDIFLOW � COMPLETED WORK
 
 ## Document Purpose
 
@@ -1086,3 +1086,111 @@ remaining polish
 next milestone
 
 No major implementation milestone should be considered formally complete until its status has also been reflected in the project documentation.
+
+## Milestone: Authentication Foundation Completed
+
+**Status:** Completed
+**Date:** August 11, 2026
+
+### Completed
+
+The Mediflow backend authentication foundation has been implemented and verified end-to-end.
+
+The following functionality is now operational:
+
+1. **Environment-based security configuration**
+
+   * JWT configuration moved out of source code and into the backend `.env`.
+   * `SECRET_KEY` is loaded through `pydantic-settings`.
+   * `ALGORITHM` is configurable.
+   * `ACCESS_TOKEN_EXPIRE_MINUTES` is configurable.
+
+2. **Password security**
+
+   * Password hashing is implemented using bcrypt through Passlib.
+   * Password verification has been tested successfully.
+   * Plain-text passwords are not returned by the API.
+
+3. **JWT authentication**
+
+   * JWT access-token creation is implemented.
+   * JWT decoding is implemented.
+   * Tokens contain the authenticated user's ID.
+   * Tokens contain the user's organization ID.
+   * Token expiration is configured through application settings.
+
+4. **Multi-organization user relationship**
+
+   * An organization record was successfully created in PostgreSQL.
+   * A user was successfully created and associated with that organization.
+   * The existing `organization_id` relationship remains central to the authentication architecture.
+
+5. **Authentication API**
+
+   * `POST /auth/login` has been successfully tested.
+   * Valid credentials are accepted.
+   * Password verification succeeds.
+   * A bearer access token is returned.
+   * The response includes the authenticated user's ID and organization ID.
+
+### Verification
+
+The following real API flow has been successfully executed:
+
+```text
+Organization
+    ↓
+PostgreSQL persistence
+    ↓
+User creation
+    ↓
+Password hashing
+    ↓
+User persistence
+    ↓
+POST /auth/login
+    ↓
+Password verification
+    ↓
+JWT generation
+    ↓
+Organization-aware access token
+```
+
+The final login verification confirmed:
+
+```text
+LOGIN: OK
+TOKEN TYPE: bearer
+TOKEN RECEIVED: True
+```
+
+The authentication foundation is therefore considered operational.
+
+### Development Test Data
+
+A development organization and development administrator account were created to validate the authentication flow.
+
+These records are **development/test data only** and do not change Mediflow's multi-organization architecture.
+
+### Architectural Significance
+
+This milestone establishes the foundation for authenticated and organization-aware backend operations.
+
+The next authentication milestone is to implement a reusable authenticated-user dependency that:
+
+```text
+Bearer token
+    ↓
+JWT validation
+    ↓
+User identification
+    ↓
+Database user lookup
+    ↓
+Active-user verification
+    ↓
+Current user / organization context
+```
+
+This dependency will then be applied to protected API endpoints.
