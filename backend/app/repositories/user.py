@@ -35,12 +35,16 @@ def create(
 
 
 
-def get_all(
-    db: Session
-):
+from uuid import UUID
 
+def get_all(
+    db: Session,
+    organization_id: UUID
+):
     return db.query(
         User
+    ).filter(
+        User.organization_id == organization_id
     ).all()
 
 def get_by_email(
@@ -52,4 +56,13 @@ def get_by_email(
         User
     ).filter(
         User.email == email
+    ).first()
+def get_by_id(
+    db: Session,
+    user_id: UUID
+):
+    return db.query(
+        User
+    ).filter(
+        User.id == user_id
     ).first()

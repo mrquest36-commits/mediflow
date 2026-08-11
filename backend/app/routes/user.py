@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from sqlalchemy.orm import Session
+
 from app.database import get_db
 from app.schemas.user import (
     UserCreate,
@@ -8,15 +9,14 @@ from app.schemas.user import (
 )
 
 from app.services import user as service
-
+from app.dependencies.auth import get_current_user
+from app.models.user import User
 
 
 router = APIRouter(
     prefix="/users",
     tags=["Users"]
 )
-
-
 
 
 @router.post(
@@ -34,15 +34,15 @@ def create_user(
     )
 
 
-
 @router.get(
     "/",
     response_model=list[UserResponse]
 )
 def get_users(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
-
     return service.get_users(
-        db
+        db,
+        current_user.organization_id
     )

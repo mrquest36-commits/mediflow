@@ -17,10 +17,13 @@ def create_user(
 
 
 
-def get_users(
-    db: Session
-):
+from uuid import UUID
 
+def get_users(
+    db: Session,
+    organization_id: UUID
+):
     return repository.get_all(
-        db
+        db,
+        organization_id
     )
